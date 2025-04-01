@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AWS Adventure: Cloud Quest</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>AWS Adventure: Cloud Quest</h1>
+  <p>
+    Welcome! You must reach 80 points by answering 30 AWS questions.<br />
+    Reach 80 points to obtain the Golden Sword of Knowledge and defeat the AWS Cloud Dragon!<br />
+    You will have 2 attempts per question.<br />
+    Correct answer on the 1st try: +3 points.<br />
+    Correct answer on the 2nd try: +2 points.<br />
+    Wrong answers: -3 points.
+  </p>
+
+  <div class="question-box" id="question-box">
+    <p id="question-text"></p>
+    <div id="answer-buttons"></div>
+  </div>
+
+  <div class="progress-bar">
+    <span>🧝‍♂️</span>
+    <div class="progress-track">
+      <span id="knight" class="knight">🛡️</span>
+    </div>
+    <div class="dragon">🐉</div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <script>
+    const questions = [
+      {
+        q: "What is the primary purpose of AWS IAM?",
+        options: ["To launch EC2 instances", "To automate deployments", "To manage user access", "To bill customers"],
+        answer: "To manage user access"
+      },
+      {
+        q: "Which service lets you launch virtual servers on AWS?",
+        options: ["Amazon S3", "Amazon EC2", "AWS Lambda", "Amazon RDS"],
+        answer: "Amazon EC2"
+      },
+      {
+        q: "Which service distributes traffic across multiple targets?",
+        options: ["Amazon S3", "AWS Lambda", "Elastic Load Balancer", "Auto Scaling"],
+        answer: "Elastic Load Balancer"
+      },
+      {
+        q: "Which AWS service helps automatically add/remove EC2 instances based on demand?",
+        options: ["Amazon CloudWatch", "Auto Scaling", "AWS Trusted Advisor", "Amazon Route 53"],
+        answer: "Auto Scaling"
+      },
+      {
+        q: "What is a benefit of using AWS CloudFormation?",
+        options: ["Encrypts S3 files", "Enables automation of infrastructure", "Monitors usage", "Manages database backups"],
+        answer: "Enables automation of infrastructure"
+      },
+      {
+        q: "What AWS service helps discover and protect sensitive data like PII?",
+        options: ["AWS Shield", "Amazon Macie", "Amazon Inspector", "AWS WAF"],
+        answer: "Amazon Macie"
+      },
+      {
+        q: "Which AWS storage type is object-based?",
+        options: ["Amazon EBS", "Amazon S3", "Amazon RDS", "Amazon DynamoDB"],
+        answer: "Amazon S3"
+      },
+      {
+        q: "What is AWS GuardDuty used for?",
+        options: ["Scaling EC2", "Encrypting EBS", "Monitoring network activity for threats", "Creating IAM policies"],
+        answer: "Monitoring network activity for threats"
+      },
+      {
+        q: "Which tool helps estimate costs before launching AWS services?",
+        options: ["AWS Cost Explorer", "AWS Billing Console", "AWS Pricing Calculator", "AWS Config"],
+        answer: "AWS Pricing Calculator"
+      },
+      {
+        q: "Which of the following is a DNS service?",
+        options: ["Amazon S3", "Amazon Route 53", "AWS Config", "AWS Global Accelerator"],
+        answer: "Amazon Route 53"
+      },
+      {
+        q: "In the AWS Shared Responsibility Model, what is AWS responsible for?",
+        options: ["Patching your OS", "Securing customer data", "Physical infrastructure and services", "Managing user permissions"],
+        answer: "Physical infrastructure and services"
+    },
+    {
+        q: "Which service monitors AWS environment activities and logs API calls?",
+        options: ["AWS CloudTrail", "AWS GuardDuty", "AWS CloudWatch", "AWS Config"],
+        answer: "AWS CloudTrail"
+    },
+    {
+        q: "Which AWS database service is a key-value and document-based NoSQL database?",
+        options: ["Amazon Aurora", "Amazon RDS", "Amazon Redshift", "Amazon DynamoDB"],
+            answer: "Amazon DynamoDB"
+    },
+    {
+        q: "Which AWS service lets you run code without provisioning or managing servers?",
+        options: ["AWS CloudFormation", "Amazon EC2", "AWS Lambda", "Amazon ECS"],
+        answer: "AWS Lambda"
+    },
+    {
+        q: "What are Amazon Availability Zones (AZs)?",
+        options: ["Data centers in each Region", "Fully isolated locations in a Region", "Secondary backups", "Edge locations"],
+        answer: "Fully isolated locations in a Region"
+    },
+    {
+        q: "What is the main purpose of AWS Auto Scaling?",
+        options: ["To patch EC2 instances", "To automate backups", "To add/remove resources based on demand", "To analyze logs"],
+        answer: "To add/remove resources based on demand"
+    },
+    {
+        q: "Which AWS tool provides real-time recommendations for cost optimization, performance, and security?",
+        options: ["AWS CloudTrail", "AWS Config", "AWS Trusted Advisor", "AWS Organizations"],
+        answer: "AWS Trusted Advisor"
+    },
+    {
+        q: "What AWS service lets you centrally manage multiple AWS accounts?",
+        options: ["AWS Control Tower", "AWS Organizations", "AWS IAM", "AWS Shield"],
+        answer: "AWS Organizations"
+    },
+    {
+        q: "What is the AWS Pricing Calculator used for?",
+        options: ["Creating dashboards", "Logging access", "Estimating costs of AWS services", "Encrypting data"],
+        answer: "Estimating costs of AWS services"
+    },
+    {
+        q: "Which AWS service enables Infrastructure as Code (IaC)?",
+        options: ["AWS Config", "AWS CloudFormation", "Amazon Inspector", "AWS Shield"],
+        answer: "AWS CloudFormation"
+    },
+    {
+        q: "What is the primary benefit of Amazon S3?",
+        options: ["Real-time compute scaling", "Object-based scalable storage", "Low-latency database access", "Block-level encryption"],
+        answer: "Object-based scalable storage"
+    },
+    {
+        q: "Which AWS service helps protect web apps from common threats like SQL injection?",
+        options: ["AWS IAM", "Amazon Inspector", "AWS WAF", "AWS KMS"],
+        answer: "AWS WAF"
+    },
+    {
+        q: "What is the benefit of AWS Regions being isolated from each other?",
+        options: ["Easier global access", "Faster data replication", "Improved availability and fault tolerance", "Simplified billing"],
+        answer: "Improved availability and fault tolerance"
+    },
+    {
+        q: "Which storage solution is best for a persistent disk volume on EC2?",
+        options: ["Amazon S3", "Amazon RDS", "Amazon EBS", "Amazon EFS"],
+        answer: "Amazon EBS"
+    },
+    {
+        q: "What is AWS CloudFront used for?",
+        options: ["Scaling EC2", "Delivering content globally with low latency", "Monitoring app health", "Connecting VPCs"],
+        answer: "Delivering content globally with low latency"
+    },
+    {
+        q: "What does AWS KMS help you manage?",
+        options: ["User access to S3 buckets", "Database scaling", "Encryption keys and security", "Lambda triggers"],
+        answer: "Encryption keys and security"
+    },
+    {
+        q: "Which service lets you connect your on-premises network directly to AWS?",
+        options: ["AWS Site-to-Site VPN", "Amazon CloudFront", "AWS Direct Connect", "AWS Transit Gateway"],
+        answer: "AWS Direct Connect"
+    },
+    {
+        q: "Which AWS service provides managed relational databases?",
+        options: ["Amazon S3", "Amazon DynamoDB", "Amazon RDS", "Amazon Redshift"],
+        answer: "Amazon RDS"
+    },
+    {
+        q: "What is the AWS Free Tier?",
+        options: ["A discount program for long-term EC2", "A limited usage offering at no cost for new users", "A pricing calculator", "A monthly credit system"],
+        answer: "A limited usage offering at no cost for new users"
+    },
+    {
+        q: "What does Amazon Inspector do?",
+        options: ["Launches EC2 instances", "Detects security vulnerabilities in workloads", "Monitors billing", "Stores sensitive data"],
+        answer: "Detects security vulnerabilities in workloads"
+    }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let attempts = 0;
+
+    function loadQuestion() {
+      const question = questions[currentQuestion];
+      document.getElementById("question-text").textContent = `Q${currentQuestion + 1}: ${question.q}`;
+      const buttonsDiv = document.getElementById("answer-buttons");
+      buttonsDiv.innerHTML = "";
+      attempts = 0;
+      updateKnightProgress();
+
+      question.options.forEach((option) => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.onclick = function () {
+          handleAnswer(this.textContent);
+        };
+        buttonsDiv.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selected) {
+      const correct = questions[currentQuestion].answer;
+      if (selected.trim() === correct.trim()) {
+        score += (attempts === 0 ? 3 : 2);
+        document.getElementById("status").textContent = `Correct! Score: ${score}`;
+        nextQuestion();
+      } else {
+        attempts++;
+        if (attempts < 2) {
+          document.getElementById("status").textContent = "Incorrect. Try once more.";
+        } else {
+          score -= 3;
+          document.getElementById("status").textContent = `Wrong! Score: ${score}`;
+          nextQuestion();
+        }
+      }
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        loadQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function updateKnightProgress() {
+      const knight = document.getElementById("knight");
+      const maxScore = questions.length * 3; // Max possible score (30 questions x 3 points)
+      const percent = Math.max(0, Math.min(100, (score / maxScore) * 100));
+      knight.style.left = `${percent}%`;
+
+    const bar = document.querySelector(".progress-bar");
+    if (percent >= 25) bar.classList.add("milestone-25");
+    if (percent >= 50) bar.classList.add("milestone-50");
+    if (percent >= 75) bar.classList.add("milestone-75");
+    if (percent >= 90) document.querySelector(".dragon").classList.add("celebrate");
+}
+
+    function endGame() {
+      updateKnightProgress();
+      const finalMsg = score >= 80
+        ? "You have obtained the Golden Sword of Knowledge and defeated the AWS Cloud Dragon! 🗡️🐉"
+        : "You failed to defeat the AWS Cloud Dragon. Try again to earn 80 points!";
+      document.getElementById("question-box").innerHTML = `<h2>Game Over</h2><p>${finalMsg}</p><p>Final Score: ${score}</p>`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
